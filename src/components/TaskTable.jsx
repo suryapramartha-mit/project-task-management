@@ -19,7 +19,7 @@ export default function TaskTable({ tasks }) {
             <TableCell>Task Name</TableCell>
             <TableCell>Description</TableCell>
             <TableCell>Due Date</TableCell>
-            <TableCell>Priority(1-High 5-Low)</TableCell>
+            <TableCell>Priority(1-Highest 5-Lowest)</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Assignee</TableCell>
           </TableRow>
