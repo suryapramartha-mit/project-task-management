@@ -34,7 +34,7 @@ export default function App() {
               open={snack.open}
               autoHideDuration={3000}
               onClose={() => setSnack({ ...snack, open: false })}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
             <Alert severity={snack.severity} sx={{ width: "100%" }}>
                {snack.message}

@@ -1,4 +1,4 @@
-import { CircularProgress, Typography, Box, FormControl, InputLabel, Select, MenuItem, Button, TablePagination } from "@mui/material";
+import { CircularProgress, Typography, Box, FormControl, InputLabel, Select, MenuItem, Button, TablePagination, Snackbar,Alert } from "@mui/material";
 import { useEffect, useState } from "react";
 import { fetchTasks } from "../apis/taskApi.js";
 import TaskTable from "../components/TaskTable.jsx";
@@ -24,6 +24,10 @@ export default function TaskList({ refresh }) {
   const [size, setSize] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
 
+  //error
+  const [errorMsg, setErrorMsg] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const loadTasks = async () => {
     setLoading(true);
     try {
@@ -33,6 +37,8 @@ export default function TaskList({ refresh }) {
       setTotalElements(response.data.totalElements || 0);
     } catch (err) {
       console.error("Failed to fetch tasks", err);
+      setErrorMsg("Failed to fetch tasks. Please try again later.");
+      setOpenSnackbar(true);
     }
     setLoading(false);
   };
@@ -40,6 +46,7 @@ export default function TaskList({ refresh }) {
   useEffect(() => {
     loadTasks();
   }, [refresh, projectId, startDate, endDate, sortBy, page, size]);
+
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeSize = (event) => {
@@ -130,8 +137,6 @@ export default function TaskList({ refresh }) {
         </Button>
       </Box>
       
-      
-      
   
       {loading && <CircularProgress />}
 
@@ -140,7 +145,6 @@ export default function TaskList({ refresh }) {
       {!loading && tasks.length > 0 && (
         viewMode === "table" ? <TaskTable tasks={tasks} /> : <TaskCalendar tasks={tasks} projects={projects} />
       )}
-    {/* Pagination */}
       <TablePagination
         component="div"
         count={totalElements}
@@ -148,6 +152,17 @@ export default function TaskList({ refresh }) {
         onPageChange={handleChangePage}
         rowsPerPage={size}
         onRowsPerPageChange={handleChangeSize}/>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >     
+        <Alert onClose={() => setOpenSnackbar(false)} severity="error" sx={{ width: "100%" }}>
+          {errorMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
