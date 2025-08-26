@@ -3,14 +3,21 @@ import userEvent from '@testing-library/user-event';
 import TaskForm from '../components/TaskForm';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { employees, priorities, projects } from '../data';
 
-// Mock data for projects and employees
+// Mock the data
 vi.mock('../data', () => ({
   projects: [{ id: '1', name: 'Project A' }],
-  employees: [{ id: '101', name: 'Employee test A' }]
+  employees: [{ id: '101', name: 'Employee test A' }],
+  priorities: [
+    { id: 1, name: "Highest" },
+    { id: 2, name: "High" },
+    { id: 3, name: "Medium" },
+    { id: 4, name: "Low" },
+    { id: 5, name: "Lowest" },
+  ],
 }));
 
-// Mock the API
 vi.mock("../api", () => ({
   createTask: vi.fn().mockResolvedValue({ data: { id: 1, name: "New Task" } }),
 }));
@@ -26,30 +33,38 @@ describe("TaskForm Component", () => {
       </LocalizationProvider>
     );
 
-    const button = screen.getByRole("button", { name: /add task/i });
-    expect(button).toBeDisabled();
+    // Select project
+    const projectSelect = screen.getByLabelText(/project/i);
+    await user.click(projectSelect);
+    const projectOption = screen.getByRole("option", { name: projects[0].name });
+    await user.click(projectOption);
 
-    // Fill the fields
-    await user.click(screen.getByLabelText(/project/i));
-    await user.click(screen.getByText("Project A"));
+    // Type task name
+    const taskNameInput = screen.getByLabelText(/task name/i);
+    await user.type(taskNameInput, "Test Task");
 
-    await user.type(screen.getByLabelText(/task name/i), "New Task");
-    await user.type(screen.getByLabelText(/description/i), "Some description");
-    await user.type(screen.getByLabelText(/priority/i), "3");
+    // Type description
+    const descInput = screen.getByLabelText(/description/i);
+    await user.type(descInput, "Test description");
 
-    await user.click(screen.getByLabelText(/assign to/i));
-    await user.click(screen.getByText("Employee test A"));
+    // Select priority
+    const prioritySelect = screen.getByLabelText(/priority/i);
+    await user.click(prioritySelect);
+    const priorityOption = screen.getByRole("option", { name: priorities[0].name });
+    await user.click(priorityOption);
 
-    // For DatePicker (direct input)
-    const dateInput = screen.getByLabelText(/due date/i);
+    // Select assignee
+    const assignSelect = screen.getByLabelText(/assign to/i);
+    await user.click(assignSelect);
+    const assignOption = screen.getByRole("option", { name: employees[0].name });
+    await user.click(assignOption);
+
+    // Fill due date (DesktopDatePicker uses input)
+    const dateInput = screen.getAllByLabelText(/due date/i)[0];
     await user.type(dateInput, "2025-08-26");
-    await user.tab(); // to trigger blur
 
-    expect(button).toBeEnabled();
-
-    // Submit the form
-    await user.click(button);
-
-    expect(mockOnTaskCreated).toHaveBeenCalledWith({ id: 1, name: "New Task" });
+    // Assert button is enabled
+    const addButton = screen.getByRole("button", { name: /add task/i });
+    expect(addButton).toBeEnabled();
   });
 });

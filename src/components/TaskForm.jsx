@@ -56,8 +56,8 @@ export default function TaskForm({ onTaskCreated }) {
             <Grid container direction="column" spacing={2}>
                 <Grid item>
                     <FormControl fullWidth>
-                        <InputLabel>Project</InputLabel>
-                        <Select
+                        <InputLabel id="project-input">Project</InputLabel>
+                        <Select id="project-input"
                         value={projectId}
                         onChange={(e) => setProjectId(e.target.value)}
                         label="Project"
@@ -95,13 +95,13 @@ export default function TaskForm({ onTaskCreated }) {
                         value={dueDate}
                         required
                         onChange={(newDate) => setDueDate(newDate)}
-                        renderInput={(params) => <TextField {...params} fullWidth />}
+                        renderInput={(params) => <TextField id="dueDate-input"{...params} fullWidth />}
                     />
                 </Grid>
                 <Grid item>
                     <FormControl fullWidth>
-                        <InputLabel>Priority</InputLabel>
-                        <Select
+                        <InputLabel id="priority-input">Priority</InputLabel>
+                        <Select id="priority-input"
                         value={priority}
                         onChange={(e) => setPriority(e.target.value)}
                         label="Priority"
@@ -116,8 +116,8 @@ export default function TaskForm({ onTaskCreated }) {
                 </Grid>
                 <Grid item>
                   <FormControl fullWidth>
-                    <InputLabel>Assign To</InputLabel>
-                    <Select
+                    <InputLabel id="assignTo-input">Assign To</InputLabel>
+                    <Select id="assignTo-input"
                       value={assignedToId}
                       onChange={(e) => setAssignedToId(e.target.value)}
                       label="Assign To"
