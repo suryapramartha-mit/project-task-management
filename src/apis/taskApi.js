@@ -1,7 +1,7 @@
 import axios from "axios";
 import { format } from "date-fns";
 
-const API_URL = "http://localhost:8080/api/task";
+const API_URL = import.meta.env.VITE_PROJECT_TASK_MANAGEMENT_API_URL + "/api/task";
 
 export const fetchTasks = async (page = 0, size = 10, filters = {}) => {
   const params = {page, size, ...filters };

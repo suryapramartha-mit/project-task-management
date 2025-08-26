@@ -1,7 +1,8 @@
 import { CircularProgress, Typography, Box, FormControl, InputLabel, Select, MenuItem, Button, TablePagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchTasks } from "../api";
+import { fetchTasks } from "../apis/taskApi.js";
 import TaskTable from "../components/TaskTable.jsx";
+import TaskCalendar from "../components/TaskCalendar.jsx";
 import { projects } from "../data.js";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
@@ -10,6 +11,7 @@ import { startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 export default function TaskList({ refresh }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState("table");
 
   //filters
   const [projectId, setProjectId] = useState("");
@@ -69,6 +71,10 @@ export default function TaskList({ refresh }) {
 
   return (
     <Box mb={2}>
+      <Box mb={2}>
+        <Button size="small" onClick={() => setViewMode("table")} variant={viewMode==="table" ? "contained":"outlined"}>Table View</Button>
+        <Button size="small" onClick={() => setViewMode("calendar")} variant={viewMode==="calendar" ? "contained":"outlined"}>Calendar View (Week)</Button>
+      </Box>
       {/* Filters */}
       <Box display="flex" gap={2} mb={2} flexWrap="wrap">
         <FormControl sx={{minWidth: 150}}>
@@ -124,12 +130,15 @@ export default function TaskList({ refresh }) {
         </Button>
       </Box>
       
-      {loading ? (<CircularProgress />) : tasks.length === 0 ? 
-      (
-        <Typography>No tasks found</Typography>
-      )  : 
-      (
-        <TaskTable tasks={tasks} />
+      
+      
+  
+      {loading && <CircularProgress />}
+
+      {!loading && tasks.length === 0 && <Typography>No tasks found</Typography>}
+
+      {!loading && tasks.length > 0 && (
+        viewMode === "table" ? <TaskTable tasks={tasks} /> : <TaskCalendar tasks={tasks} projects={projects} />
       )}
     {/* Pagination */}
       <TablePagination
