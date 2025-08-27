@@ -18,6 +18,7 @@ export default function TaskList({ refresh }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [sortBy, setSortBy] = useState("");
+  const [sort, setSort] = useState("ASC"); 
 
   //pagination
   const [page, setPage] = useState(0);
@@ -31,7 +32,7 @@ export default function TaskList({ refresh }) {
   const loadTasks = async () => {
     setLoading(true);
     try {
-      const filters = { projectId, startDate, endDate, sortBy };
+      const filters = { projectId, startDate, endDate, sortBy, sort };
       const response = await fetchTasks(page, size, filters);
       setTasks(response.data.content || []);
       setTotalElements(response.data.totalElements || 0);
@@ -45,7 +46,7 @@ export default function TaskList({ refresh }) {
 
   useEffect(() => {
     loadTasks();
-  }, [refresh, projectId, startDate, endDate, sortBy, page, size]);
+  }, [refresh, projectId, startDate, endDate, sortBy, page, size, sort]);
 
 
   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -119,6 +120,15 @@ export default function TaskList({ refresh }) {
             <MenuItem value="PRIORITY">Priority</MenuItem>
           </Select>
         </FormControl>
+
+        <FormControl sx={{minWidth: 120}}>
+          <InputLabel>Sort</InputLabel>
+          <Select value={sort} onChange={(e) => setSort(e.target.value)} label="Sort">
+            <MenuItem value="ASC">Ascending</MenuItem>
+            <MenuItem value="DESC">Descending</MenuItem>
+          </Select>
+        </FormControl>
+      
 
         <Button variant="contained" onClick={loadTasks}>
           Apply
